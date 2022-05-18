@@ -1,6 +1,6 @@
 # Swoft Auth
 
-Swoft Auth Component
+Swoft Auth Component(fixed by janfish)
 
 ## Install
 
