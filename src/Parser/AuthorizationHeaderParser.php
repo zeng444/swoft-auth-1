@@ -55,19 +55,16 @@ class AuthorizationHeaderParser implements AuthorizationParserInterface
         $authValue = $request->getHeaderLine($this->headerKey);
 
         $type = $this->getHeadString($authValue);
-        if (isset($this->mergeTypes()[$type])) {
-            $handler = Swoft::getBean($this->mergeTypes()[$type]);
-
-            if (!$handler instanceof AuthHandlerInterface) {
-                throw new AuthException(
-                    sprintf('%s  should implement Swoft\Auth\Contract\AuthHandlerInterface',
-                        $this->mergeTypes()[$type]), ErrorCode::POST_DATA_NOT_PROVIDED);
-            }
-
-            $request = $handler->handle($request);
+        if (!isset($this->mergeTypes()[$type])) {
+            throw new AuthException('AuthorizationParser type not exits');
         }
-
-        return $request;
+        $handler = Swoft::getBean($this->mergeTypes()[$type]);
+        if (!$handler instanceof AuthHandlerInterface) {
+            throw new AuthException(
+                sprintf('%s  should implement Swoft\Auth\Contract\AuthHandlerInterface',
+                    $this->mergeTypes()[$type]), ErrorCode::POST_DATA_NOT_PROVIDED);
+        }
+        return $handler->handle($request);
     }
 
     private function getHeadString(string $val): string
